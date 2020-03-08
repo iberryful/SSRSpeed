@@ -39,6 +39,28 @@ def pushToServer(filename):
 		logger.exception("Pushing result to server error.")
 		return result
 
+def uploadToTransfer(filename):
+	url = config['transferUrl'] or "https://transfer.sh/"
+	files = {'file': open(filename, 'rb')}
+	try:
+		r = requests.post(url, files=files)
+	except:
+		logger.exception("Uploading to transfer error.")
+		return None
+	return r.text
+
+def sendToServerChan(head, body):
+	url = config['serverChanUrl']
+	payload = {
+		"text": head,
+		"desp": body
+	}
+	try:
+		r = requests.get(url, params=payload)
+	except:
+		logger.exception("Sending to serverchan error")
+
+
 if (__name__ == "__main__"):
 	print(pushToServer("test.png"))
 

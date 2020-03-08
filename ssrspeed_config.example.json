@@ -18,10 +18,14 @@
 		"port": 10870,
 		"token": ""
 	},
+
+
 	"exportResult": {
 		"hideMaxSpeed": true,
-		"uploadResult": false,
+		"uploadResult": true,
 		"font": "./resources/fonts/SourceHanSansCN-Medium.otf",
+		"transferUrl": "",
+		"serverChanUrl": "",
 		"colors": [
 			{
 				"name": "origin",
@@ -96,8 +100,8 @@
 		"remark": "Example Remark."
 	},
 	"fileDownload": {
-		"maxWorkers": 4,
-		"buffer": 4096,
+		"maxWorkers": 1,
+		"buffer": 8192,
 		"skipRuleMatch": false,
 		"rules": [
 			{
@@ -132,7 +136,7 @@
 		]
 	},
 	"webPageSimulation": {
-		"maxThread": 4,
+		"maxThread": 1,
 		"urls": [
 			"https://www.google.com.hk",
 			"https://www.youtube.com",

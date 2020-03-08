@@ -8,7 +8,7 @@ import time
 import logging
 logger = logging.getLogger("Sub")
 
-from .upload_result import pushToServer
+from .upload_result import uploadToTransfer, sendToServerChan
 from .sorter import Sorter
 from .exporters import ExporterWps
 
@@ -35,6 +35,7 @@ class ExportResult(object):
 		self.__colorSpeedList = []
 		self.__font = ImageFont.truetype(self.__config["font"],18)
 		self.__timeUsed = "N/A"
+		self.group = ""
 	#	self.setColors()
 
 	def setColors(self,name = "origin"):
@@ -56,7 +57,7 @@ class ExportResult(object):
 		self.__timeUsed = time.strftime("%H:%M:%S", time.gmtime(timeUsed))
 		logger.info("Time Used : {}".format(self.__timeUsed))
 
-	def export(self,result,split = 0,exportType = 0,sortMethod = ""):
+	def export(self,result,split = 0,exportType = 0,sortMethod = "SPEED"):
 		if (not exportType):
 			self.__exportAsJson(result)
 		sorter = Sorter()
@@ -228,6 +229,7 @@ class ExportResult(object):
 			item = result[i]
 
 			group = item["group"]
+			self.group = group
 			draw.text((5,30 * j + 30 + 4),group,font=resultFont,fill=(0,0,0))
 
 			remarks = item["remarks"]
@@ -310,7 +312,12 @@ class ExportResult(object):
 		for _file in files:
 			if (not self.__config["uploadResult"]):
 				break
-			pushToServer(_file)
+			url = uploadToTransfer(_file)
+			if url:
+				sendToServerChan(
+					"Test result img for %s" % self.group,
+					"![result](%s)" % url
+				)
 
 	def __parseTraffic(self,traffic):
 		traffic = traffic / 1024 / 1024
@@ -366,5 +373,12 @@ class ExportResult(object):
 			f.writelines(json.dumps(result,sort_keys=True,indent=4,separators=(',',':')))
 			f.close()
 		logger.info("Result exported as %s" % filename)
+		res = ""
+		for item in j:
+			res += "%s\t%.2fMB/s\t%s\n" % (
+			item['remarks'], item['dspeed'] / 1024 / 1024, item['geoIP']['outbound']['address'])
+		print(res)
+		sendToServerChan("Test result text for %s" % self.group, res)
+
 		return result
 
