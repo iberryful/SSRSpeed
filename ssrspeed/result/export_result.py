@@ -374,7 +374,7 @@ class ExportResult(object):
 			f.close()
 		logger.info("Result exported as %s" % filename)
 		res = ""
-		for item in j:
+		for item in result:
 			res += "%s\t%.2fMB/s\t%s\n" % (
 			item['remarks'], item['dspeed'] / 1024 / 1024, item['geoIP']['outbound']['address'])
 		print(res)
