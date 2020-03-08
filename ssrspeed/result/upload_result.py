@@ -10,7 +10,7 @@ logger = logging.getLogger("Sub")
 
 from config import config
 
-config = config["uploadResult"]
+config = config["exportResult"]
 
 def pushToServer(filename):
 	result = {
@@ -40,7 +40,7 @@ def pushToServer(filename):
 		return result
 
 def uploadToTransfer(filename):
-	url = config['transferUrl'] or "https://transfer.sh/"
+	url = config.get('transferUrl', None) or "https://transfer.sh/"
 	files = {'file': open(filename, 'rb')}
 	try:
 		r = requests.post(url, files=files)
@@ -50,7 +50,9 @@ def uploadToTransfer(filename):
 	return r.text
 
 def sendToServerChan(head, body):
-	url = config['serverChanUrl']
+	url = config.get('serverChanUrl', None)
+	if not url:
+		return
 	payload = {
 		"text": head,
 		"desp": body
